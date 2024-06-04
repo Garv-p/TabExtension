@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Hello Extensions",
+    "description": "Base Level Extension",
+    "version": "1.0",
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action":{
+      "default_popup": "hello.html"
+    },
+
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "permissions": [
+        "activeTab",
+        "scripting",
+        "tabs"
+      ]
+  }

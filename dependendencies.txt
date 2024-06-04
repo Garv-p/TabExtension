@@ -1,0 +1,7 @@
+pandas
+scipy
+sklearn
+vectorizers
+sentence_transformers
+umap
+numbaconda install -c conda-forge sentence-transformers

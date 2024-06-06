@@ -26,5 +26,7 @@ async def store(item: Item):
 
 @app.get("/process")
 async def process():
+    proccessed = processing.run_model(tabs)
+    return proccessed
     
     

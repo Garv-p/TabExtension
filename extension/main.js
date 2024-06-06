@@ -23,10 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function addToTabGroup(tabId, groupId) {
+    chrome.tabs.group({
+        groupId: groupId,
+        tabIds: tabId
+    });
+}
+
 async function processData(){
     const url = "http://127.0.0.1:8000/process";
     const response = await fetch(url);
-    return response.json();
+    chrome.tabs.query({  currentWindow: true }, (tabs) => {
+        for( let i = 0; i < tabs.length; i++){
+            let activeTab = tabs[i];
+            addToTabGroup(activeTab.id, response.groupId);
+        }
+        });
+    
 }
 
 async function sendData(data){

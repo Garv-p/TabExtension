@@ -9,7 +9,6 @@ function scrape() {
     title: title,
     body: body
   };
-  console.log(data);
   chrome.runtime.sendMessage(data);
 }
 scrape();

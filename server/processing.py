@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import sklearn.cluster as cluster
-
+"""
 import umap
 import numba
 
@@ -9,8 +9,8 @@ import sklearn.metrics
 import vectorizers
 import vectorizers.transformers
 import sklearn.feature_extraction
-import scipy.sparse
-
+impconda install -c conda-forge sentence-transformersort scipy.sparse
+"""
 import sentence_transformers
 
 from sklearn.utils.extmath import randomized_svd
@@ -42,16 +42,23 @@ def run_model(data):
     model = "HDBSCAN"
     embeding_model = "all-mpnet-base-v2"
     df = process_data(data)
-    for column in df.keys:
+    """
+    for column in df.keys():
         item_dict = df[column].dict()
         for keys in item_dict.keys():
             item_dict[keys] = embed_sentences(item_dict[keys], embedding_model=embeding_model)  
         df[column] = pd.Series(item_dict)
+        """
     cluster_dict = {}
-    for column in df.keys:
-        cluster_dict[column] =  1
+    i = 0
+    for column in df.keys():
+        if i < 6:
+            cluster_dict[column] = 1
+        else:
+            cluster_dict[column] = 2
+        i+=1
      
-     return cluster_dict
+    return cluster_dict
     
 
     

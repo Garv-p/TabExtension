@@ -28,5 +28,11 @@ async def store(item: Item):
 async def process():
     proccessed = processing.run_model(tabs)
     return proccessed
+
+#deletes everything in the dictionary
+@app.get("/delete")
+async def delete():
+    tabs.clear()
+    return tabs
     
     

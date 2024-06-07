@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 files: ['scraping.js']
             });
         }
+        processData();
+
         });
     });
 });
@@ -36,10 +38,15 @@ async function processData(){
     chrome.tabs.query({  currentWindow: true }, (tabs) => {
         for( let i = 0; i < tabs.length; i++){
             let activeTab = tabs[i];
-            addToTabGroup(activeTab.id, response.groupId);
+            addToTabGroup(activeTab.id, 1  );
         }
         });
     
+}
+async function cleanData(){
+    const url = "http://127.0.0.1:8000/delete";
+    const response = await fetch(url);
+    return response.json();
 }
 
 async function sendData(data){

@@ -8,6 +8,7 @@ class Item(BaseModel):
     url: str
     title: str
     body: str
+    tabID: int
 
 
 
@@ -19,7 +20,7 @@ async def root():
 #takes ina json object and stores it as a key value in a dictionary
 @app.post("/store")
 async def store(item: Item):
-    tabs[item.url] = item
+    tabs[item.tabID] = item
     return item
 
 #procceses the dict and returns the values

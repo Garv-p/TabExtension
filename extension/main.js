@@ -1,3 +1,4 @@
+
 'use strict';
 document.addEventListener('DOMContentLoaded', () => {
     const createTabButton = document.getElementById('createTab');
@@ -5,22 +6,24 @@ document.addEventListener('DOMContentLoaded', () => {
         createTabButton.addEventListener('click', () => {
             chrome.tabs.create({ url: 'https://garv-p.github.io' });
         });
-});
-'use strict';
-document.addEventListener('DOMContentLoaded', () => {
-    const createTabButton = document.getElementById('scrapeButton');
 
-    createTabButton.addEventListener('click', () => {
+    const scrapeButton = document.getElementById('scrapeButton');
+
+    scrapeButton.addEventListener('click', () => {
         chrome.tabs.query({  currentWindow: true }, (tabs) => {
         for(let i =0; i < tabs.length; i++){
             let activeTab = tabs[i];
-            chrome.scripting.executeScript({
+            let data =  chrome.scripting.executeScript({
                 target: { tabId: activeTab.id },
-                files: ['scraping.js']
+                files: ['scraping.js'],
+
             });
+            data.tabID = activeTab.id;
+            chrome.runtime.sendMessage(data);
         }
         processData();
-
+        
+        cleanData();
         });
     });
 });
@@ -35,23 +38,36 @@ function addToTabGroup(tabId, groupId) {
 async function processData(){
     const url = "http://127.0.0.1:8000/process";
     const response = await fetch(url);
-    chrome.tabs.query({  currentWindow: true }, (tabs) => {
-        for( let i = 0; i < tabs.length; i++){
-            let activeTab = tabs[i];
-            addToTabGroup(activeTab.id, 1  );
-        }
-        });
+
+    response.json().then((data) => {    
+        console.log("processing: ");
+        console.log(data);
+        console.log("data type: ", typeof(data));
+        Object.keys(data).forEach((key) => {
+            const tabIds = data[key];
+            console.log(tabIds)
+            createTabGroupWithExistingTabs(tabIds);
+    });
+
+});
     
 }
-async function cleanData(){
+function cleanData(){
     const url = "http://127.0.0.1:8000/delete";
-    const response = await fetch(url);
+    const response = fetch(url);
     return response.json();
 }
-
-async function sendData(data){
+function createTabGroupWithExistingTabs(tabIds) {
+    chrome.tabs.group({
+        tabIds: tabIds
+    }, (groupId) => {
+        console.log(`Created new group with ID: ${groupId}`);
+    });
+}
+function sendData(data, id){
+    data.tabID = id;
     const url = "http://127.0.0.1:8000/store";
-    const response = await fetch( url ,{
+    const response = fetch( url ,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -63,7 +79,7 @@ async function sendData(data){
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    sendData(message).then((response) => {
+    sendData(message, sender.tab.id).then((response) => {
         console.log(response);
     });
   });
